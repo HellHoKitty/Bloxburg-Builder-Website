@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Welcome to Bullsh!t Builds</title>
+<style>
+body{font-family:Arial,sans-serif;margin:0;overflow-x:hidden;background:linear-gradient(#ffd6ec,#fff6a8)}
+.butterfly{position:fixed;font-size:24px;animation:float 20s linear infinite;opacity:.7}
+@keyframes float{from{transform:translateY(100vh)}to{transform:translateY(-120vh) translateX(100px)}}
+header{background:#ffb6d9;padding:20px;text-align:center;color:#6b3b4f}
+nav{text-align:center;background:#ffe8f4;padding:10px}
+nav button{margin:5px;padding:10px 18px;border:none;border-radius:10px;background:#ffe066;cursor:pointer;font-weight:bold}
+.container{max-width:950px;margin:auto;padding:20px}
+.card{background:white;border-radius:15px;padding:20px;box-shadow:0 4px 10px rgba(0,0,0,.1);margin-bottom:20px}
+h2{color:#d86fa4}
+.price-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+.price-item{background:#fff9cc;padding:12px;border-radius:10px;text-align:center;font-weight:bold}
+.review{border-bottom:1px solid #eee;padding:10px 0}
+.stars{color:#ffb400;font-size:18px}
+.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:10px}
+.day{padding:10px;border-radius:8px;text-align:center;font-size:13px;background:#eee;cursor:pointer}
+.day.open{background:#d8ffd8}
+.day.full{background:#ffd6d6;cursor:not-allowed}
+.day.selected{outline:3px solid #ff9ed0}
+.book{perspective:1500px;max-width:800px;margin:auto}
+.page-book{width:100%;height:420px;position:relative;transform-style:preserve-3d;transition:transform 1s;cursor:pointer}
+.page-book img{position:absolute;width:100%;height:100%;object-fit:cover;border-radius:12px;backface-visibility:hidden}
+.page-book .back{transform:rotateY(180deg)}
+.dropzone{border:2px dashed #ffb6d9;border-radius:12px;padding:20px;text-align:center;margin-top:10px;background:#fff9cc}
+.preview{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.preview img{width:80px;height:80px;object-fit:cover;border-radius:8px}
+label{display:block;margin-top:10px;font-weight:bold}
+input,select,textarea{width:100%;padding:10px;margin-top:5px;border-radius:8px;border:1px solid #ddd}
+button.submit{margin-top:15px;padding:12px;width:100%;background:#ffe066;border:none;border-radius:10px;font-size:16px;cursor:pointer}
+.footer{text-align:center;margin-top:20px;color:#777}
+.page{display:none}.page.active{display:block}
+</style>
+</head>
+<body>
+
+<div class="butterfly" style="left:10%">🦋</div>
+<div class="butterfly" style="left:30%;animation-delay:5s">🦋</div>
+<div class="butterfly" style="left:60%;animation-delay:8s">🦋</div>
+<div class="butterfly" style="left:80%;animation-delay:3s">🦋</div>
+
+<header>
+<h1>🌸 Welcome to Bullsh!t Builds 🌼</h1>
+<p>Bloxburg commissions • cozy builds • pro builder</p>
+</header>
+
+<nav>
+<button onclick="showPage('home')">Home</button>
+<button onclick="showPage('portfolio')">Portfolio</button>
+<button onclick="showPage('form')">Hire Here</button>
+<button onclick="showPage('manager')">Manager Login</button>
+</nav>
+
+<div class="container">
+
+<div id="home" class="page active">
+<div class="card">
+<h2>Prices</h2>
+<div class="price-list">
+<div class="price-item">Small Build<br>200 Robux</div>
+<div class="price-item">Medium Build<br>400 Robux</div>
+<div class="price-item">Large Build<br>800 Robux</div>
+<div class="price-item">Massive Build<br>1600 Robux</div>
+<div class="price-item">Custom Build<br>3200 Robux</div>
+<div class="price-item">Special Request<br>800 Robux</div>
+</div>
+<p>You may also pay with: Discord Nitro or Discord Decorations.</p>
+</div>
+<div class="card">
+<h2>Client Reviews</h2>
+<div id="reviewList"></div>
+<h3>Add Review</h3>
+<select id="reviewStars">
+<option value="5">★★★★★</option>
+<option value="4">★★★★</option>
+<option value="3">★★★</option>
+<option value="2">★★</option>
+<option value="1">★</option>
+</select>
+<textarea id="reviewText" placeholder="Write your review"></textarea>
+<button onclick="addReview()">Post Review</button>
+</div>
+</div>
+
+<div id="portfolio" class="page">
+<div class="card">
+<h2>My Build Portfolio</h2>
+<p>Click the page to flip.</p>
+<div class="book">
+<div class="page-book" id="bookPage" onclick="flipPage()">
+<img id="frontImg" src="https://placehold.co/800x400?text=Build+1">
+<img class="back" id="backImg" src="https://placehold.co/800x400?text=Build+2">
+</div>
+</div>
+</div>
+</div>
+
+<div id="form" class="page">
+<div class="card">
+<h2>Hire Here</h2>
+<form id="hireForm">
+<input type="text" id="website" style="display:none">
+<label>Roblox Username</label>
+<input type="text" id="user" required>
+<label>Contact</label>
+<input type="text" id="contact" required>
+<label>Build Size</label>
+<select id="size">
+<option>Small</option><option>Medium</option><option>Large</option><option>Massive</option><option>Custom</option><option>Special Request</option>
+</select>
+<label>Select Start Date</label>
+<div id="calendar" class="calendar"></div>
+<input type="hidden" id="datePick">
+<label>Extra Details</label>
+<textarea id="details"></textarea>
+<label>Reference Images</label>
+<div class="dropzone" id="dropzone">Drop images</div>
+<input type="file" id="fileInput" multiple accept="image/*" style="display:none">
+<div class="preview" id="preview"></div>
+<button class="submit" type="submit">Submit Booking</button>
+</form>
+</div>
+</div>
+
+<div id="confirm" class="page">
+<div class="card">
+<h2>Booking Confirmed</h2>
+<p>Join my Bloxburg neighbourhood using code:</p>
+<h3>Sweeti3PlE</h3>
+<p>I will contact you soon.</p>
+</div>
+</div>
+
+<div id="manager" class="page">
+<div class="card">
+<h2>Manager Login</h2>
+<p>Username is your Roblox username. Set your password once.</p>
+<label>Username</label><input type="text" id="managerUser">
+<label>Password</label><input type="password" id="managerPass">
+<button onclick="loginManager()">Login</button>
+<div id="managerPanel" style="display:none">
+<h3>Manager Controls</h3>
+<p>Edit prices, approve bookings, remove reviews.</p>
+</div>
+</div>
+</div>
+
+<div class="footer"><p>Fluttershy themed Bloxburg builder site ✨</p></div>
+</div>
+
+<script>
+function showPage(page){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(page).classList.add('active')}
+
+let reviews=JSON.parse(localStorage.getItem("reviews")||"[]")
+function renderReviews(){const list=document.getElementById("reviewList");list.innerHTML="";reviews.forEach(r=>{let div=document.createElement("div");div.className="review";div.innerHTML=`<div class='stars'>${"★".repeat(r.stars)}</div><div>${r.text}</div>`;list.appendChild(div)})}
+function addReview(){const stars=document.getElementById("reviewStars").value;const text=document.getElementById("reviewText").value;if(!text)return;reviews.push({stars,text});localStorage.setItem("reviews",JSON.stringify(reviews));renderReviews();reviewText.value=""}
+renderReviews()
+
+const images=["https://placehold.co/800x400?text=Build+1","https://placehold.co/800x400?text=Build+2","https://placehold.co/800x400?text=Build+3","https://placehold.co/800x400?text=Build+4"]
+let pageIndex=0,flipped=false
+function flipPage(){const page=document.getElementById("bookPage");flipped=!flipped;page.style.transform=flipped?"rotateY(180deg)":"rotateY(0deg)";if(!flipped){pageIndex=(pageIndex+2)%images.length;frontImg.src=images[pageIndex];backImg.src=images[(pageIndex+1)%images.length]}}
+
+let bookings=JSON.parse(localStorage.getItem("buildBookings")||"[]"),selectedDate=null
+const calendar=document.getElementById("calendar")
+function buildCalendar(){calendar.innerHTML="";for(let i=0;i<30;i++){let d=new Date();d.setDate(d.getDate()+i);let ds=d.toISOString().split('T')[0];let taken=bookings.some(b=>{let start=new Date(b);let end=new Date(b);end.setDate(end.getDate()+6);return new Date(ds)>=start&&new Date(ds)<=end});let div=document.createElement("div");div.className="day "+(taken?"full":"open");div.textContent=d.getDate();if(!taken){div.onclick=()=>{selectedDate=ds;document.getElementById("datePick").value=ds;document.querySelectorAll('.day').forEach(x=>x.classList.remove('selected'));div.classList.add('selected')}}calendar.appendChild(div)}}
+buildCalendar()
+
+const dropzone=document.getElementById("dropzone"),fileInput=document.getElementById("fileInput"),preview=document.getElementById("preview")
+let files=[]
+dropzone.onclick=()=>fileInput.click()
+fileInput.onchange=()=>handleFiles(fileInput.files)
+dropzone.ondragover=e=>{e.preventDefault()}
+dropzone.ondrop=e=>{e.preventDefault();handleFiles(e.dataTransfer.files)}
+function handleFiles(newFiles){for(let f of newFiles){files.push(f);let img=document.createElement("img");img.src=URL.createObjectURL(f);preview.appendChild(img)}}
+
+document.getElementById("hireForm").addEventListener("submit",async e=>{
+e.preventDefault()
+if(document.getElementById("website").value!="") return
+bookings.push(selectedDate)
+localStorage.setItem("buildBookings",JSON.stringify(bookings))
+const payload={content:`📦 New Bloxburg Booking\nUser: ${user.value}\nContact: ${contact.value}\nSize: ${size.value}\nStart Date: ${selectedDate}\nDetails: ${details.value}`}
+const formData=new FormData()
+formData.append("payload_json",JSON.stringify(payload))
+files.forEach((file,i)=>{formData.append(`files[${i}]`,file)})
+await fetch("PASTE_WEBHOOK_HERE",{method:"POST",body:formData})
+showPage("confirm")
+})
+
+function loginManager(){
+ const u=document.getElementById("managerUser").value;
+ const p=document.getElementById("managerPass").value;
+ let users=JSON.parse(localStorage.getItem("managers")||"{}");
+ const allowed=["Sweeti3Ple","Arv_vynn"];
+ if(!allowed.includes(u)){alert("Username not allowed");return;}
+ if(users[u]){
+  if(users[u]===p){document.getElementById("managerPanel").style.display='block';alert('Logged in');}
+  else{alert('Wrong password');}
+ } else {
+  users[u]=p;
+  localStorage.setItem("managers",JSON.stringify(users));
+  alert('Password set. You are now logged in.');
+  document.getElementById("managerPanel").style.display='block';
+ }
+}
+</script>
+</body>
+</html>
