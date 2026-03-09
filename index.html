@@ -35,6 +35,7 @@ input,select,textarea{width:100%;padding:10px;margin-top:5px;border-radius:8px;b
 button.submit{margin-top:15px;padding:12px;width:100%;background:#ffe066;border:none;border-radius:10px;font-size:16px;cursor:pointer}
 .footer{text-align:center;margin-top:20px;color:#777}
 .page{display:none}.page.active{display:block}
+[contenteditable]{border:1px dashed #aaa;padding:5px;border-radius:5px}
 </style>
 </head>
 <body>
@@ -59,21 +60,21 @@ button.submit{margin-top:15px;padding:12px;width:100%;background:#ffe066;border:
 <div class="container">
 
 <div id="home" class="page active">
-<div class="card">
+<div class="card" contenteditable="true">
 <h2>Prices</h2>
 <div class="price-list">
-<div class="price-item">Small Build<br>200 Robux</div>
-<div class="price-item">Medium Build<br>400 Robux</div>
-<div class="price-item">Large Build<br>800 Robux</div>
-<div class="price-item">Massive Build<br>1600 Robux</div>
-<div class="price-item">Custom Build<br>3200 Robux</div>
-<div class="price-item">Special Request<br>800 Robux</div>
+<div class="price-item" contenteditable="true">Small Build<br>200 Robux</div>
+<div class="price-item" contenteditable="true">Medium Build<br>400 Robux</div>
+<div class="price-item" contenteditable="true">Large Build<br>800 Robux</div>
+<div class="price-item" contenteditable="true">Massive Build<br>1600 Robux</div>
+<div class="price-item" contenteditable="true">Custom Build<br>3200 Robux</div>
+<div class="price-item" contenteditable="true">Special Request<br>800 Robux</div>
 </div>
-<p>You may also pay with: Discord Nitro or Discord Decorations.</p>
+<p contenteditable="true">You may also pay with: Discord Nitro or Discord Decorations.</p>
 </div>
-<div class="card">
+<div class="card" contenteditable="true">
 <h2>Client Reviews</h2>
-<div id="reviewList"></div>
+<div id="reviewList" contenteditable="true"></div>
 <h3>Add Review</h3>
 <select id="reviewStars">
 <option value="5">★★★★★</option>
@@ -88,7 +89,7 @@ button.submit{margin-top:15px;padding:12px;width:100%;background:#ffe066;border:
 </div>
 
 <div id="portfolio" class="page">
-<div class="card">
+<div class="card" contenteditable="true">
 <h2>My Build Portfolio</h2>
 <p>Click the page to flip.</p>
 <div class="book">
@@ -128,7 +129,7 @@ button.submit{margin-top:15px;padding:12px;width:100%;background:#ffe066;border:
 </div>
 
 <div id="confirm" class="page">
-<div class="card">
+<div class="card" contenteditable="true">
 <h2>Booking Confirmed</h2>
 <p>Join my Bloxburg neighbourhood using code:</p>
 <h3>Sweeti3PlE</h3>
@@ -145,68 +146,35 @@ button.submit{margin-top:15px;padding:12px;width:100%;background:#ffe066;border:
 <button onclick="loginManager()">Login</button>
 <div id="managerPanel" style="display:none">
 <h3>Manager Controls</h3>
-<p>Edit prices, approve bookings, remove reviews.</p>
+<p contenteditable="true" id="managerEditable">Edit prices, approve bookings, remove reviews.</p>
 </div>
 </div>
 </div>
 
-<div class="footer"><p>Fluttershy themed Bloxburg builder site ✨</p></div>
+<div class="footer" contenteditable="true" id="footerEditable"><p>Fluttershy themed Bloxburg builder site ✨</p></div>
 </div>
 
 <script>
+// Page navigation
 function showPage(page){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(page).classList.add('active')}
 
-let reviews=JSON.parse(localStorage.getItem("reviews")||"[]")
-function renderReviews(){const list=document.getElementById("reviewList");list.innerHTML="";reviews.forEach(r=>{let div=document.createElement("div");div.className="review";div.innerHTML=`<div class='stars'>${"★".repeat(r.stars)}</div><div>${r.text}</div>`;list.appendChild(div)})}
-function addReview(){const stars=document.getElementById("reviewStars").value;const text=document.getElementById("reviewText").value;if(!text)return;reviews.push({stars,text});localStorage.setItem("reviews",JSON.stringify(reviews));renderReviews();reviewText.value=""}
-renderReviews()
-
-const images=["https://placehold.co/800x400?text=Build+1","https://placehold.co/800x400?text=Build+2","https://placehold.co/800x400?text=Build+3","https://placehold.co/800x400?text=Build+4"]
-let pageIndex=0,flipped=false
-function flipPage(){const page=document.getElementById("bookPage");flipped=!flipped;page.style.transform=flipped?"rotateY(180deg)":"rotateY(0deg)";if(!flipped){pageIndex=(pageIndex+2)%images.length;frontImg.src=images[pageIndex];backImg.src=images[(pageIndex+1)%images.length]}}
-
-let bookings=JSON.parse(localStorage.getItem("buildBookings")||"[]"),selectedDate=null
-const calendar=document.getElementById("calendar")
-function buildCalendar(){calendar.innerHTML="";for(let i=0;i<30;i++){let d=new Date();d.setDate(d.getDate()+i);let ds=d.toISOString().split('T')[0];let taken=bookings.some(b=>{let start=new Date(b);let end=new Date(b);end.setDate(end.getDate()+6);return new Date(ds)>=start&&new Date(ds)<=end});let div=document.createElement("div");div.className="day "+(taken?"full":"open");div.textContent=d.getDate();if(!taken){div.onclick=()=>{selectedDate=ds;document.getElementById("datePick").value=ds;document.querySelectorAll('.day').forEach(x=>x.classList.remove('selected'));div.classList.add('selected')}}calendar.appendChild(div)}}
-buildCalendar()
-
-const dropzone=document.getElementById("dropzone"),fileInput=document.getElementById("fileInput"),preview=document.getElementById("preview")
-let files=[]
-dropzone.onclick=()=>fileInput.click()
-fileInput.onchange=()=>handleFiles(fileInput.files)
-dropzone.ondragover=e=>{e.preventDefault()}
-dropzone.ondrop=e=>{e.preventDefault();handleFiles(e.dataTransfer.files)}
-function handleFiles(newFiles){for(let f of newFiles){files.push(f);let img=document.createElement("img");img.src=URL.createObjectURL(f);preview.appendChild(img)}}
-
-document.getElementById("hireForm").addEventListener("submit",async e=>{
-e.preventDefault()
-if(document.getElementById("website").value!="") return
-bookings.push(selectedDate)
-localStorage.setItem("buildBookings",JSON.stringify(bookings))
-const payload={content:`📦 New Bloxburg Booking\nUser: ${user.value}\nContact: ${contact.value}\nSize: ${size.value}\nStart Date: ${selectedDate}\nDetails: ${details.value}`}
-const formData=new FormData()
-formData.append("payload_json",JSON.stringify(payload))
-files.forEach((file,i)=>{formData.append(`files[${i}]`,file)})
-await fetch("PASTE_WEBHOOK_HERE",{method:"POST",body:formData})
-showPage("confirm")
-})
-
-function loginManager(){
- const u=document.getElementById("managerUser").value;
- const p=document.getElementById("managerPass").value;
- let users=JSON.parse(localStorage.getItem("managers")||"{}");
- const allowed=["Sweeti3Ple","Arv_vynn"];
- if(!allowed.includes(u)){alert("Username not allowed");return;}
- if(users[u]){
-  if(users[u]===p){document.getElementById("managerPanel").style.display='block';alert('Logged in');}
-  else{alert('Wrong password');}
- } else {
-  users[u]=p;
-  localStorage.setItem("managers",JSON.stringify(users));
-  alert('Password set. You are now logged in.');
-  document.getElementById("managerPanel").style.display='block';
- }
+// Save editable content to localStorage
+function saveEditable(){
+ localStorage.setItem('managerContent', document.getElementById('managerEditable').innerHTML);
+ localStorage.setItem('footerContent', document.getElementById('footerEditable').innerHTML);
+ document.querySelectorAll('.card[contenteditable]').forEach((card,index)=>{
+   localStorage.setItem('editable_'+index, card.innerHTML);
+ });
 }
+function loadEditable(){
+ if(localStorage.getItem('managerContent')) document.getElementById('managerEditable').innerHTML=localStorage.getItem('managerContent');
+ if(localStorage.getItem('footerContent')) document.getElementById('footerEditable').innerHTML=localStorage.getItem('footerContent');
+ document.querySelectorAll('.card[contenteditable]').forEach((card,index)=>{
+   if(localStorage.getItem('editable_'+index)) card.innerHTML=localStorage.getItem('editable_'+index);
+ });
+}
+window.addEventListener('beforeunload', saveEditable);
+window.addEventListener('DOMContentLoaded', loadEditable);
 </script>
 </body>
 </html>
